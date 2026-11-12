@@ -1,0 +1,11 @@
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.synctex.gz
+latex/main.pdf
+.DS_Store
+__MACOSX/
+__pycache__/
