@@ -5,6 +5,7 @@ Solution paper for **Problem B: Predicting FIFA Penalty Trajectories** of the
 
 📄 **Paper:** [`1194B.pdf`](1194B.pdf) (34 pages)
 📝 **LaTeX source:** [`latex/`](latex/) (compile `main.tex` with `pdflatex` → `bibtex` → `pdflatex` ×2)
+📊 **Code, data and results:** [`penalty_dataset_v3/`](penalty_dataset_v3/)
 
 ## The problem
 
@@ -48,6 +49,14 @@ early observations rather than by the choice of method.
 
 ```
 ├── 1194B.pdf              # submitted paper
+├── penalty_dataset_v3/
+│   ├── generate_dataset_v3.py    # simulated-shot generator
+│   ├── validate_dataset_v3.py    # validation checks (65/65 pass)
+│   ├── penalty_simple_v3.csv     # 60 000 shots, simple physics
+│   ├── penalty_realistic_v3.csv  # same shots, richer physics + wind
+│   ├── penalty_noise_v3.csv      # noise-level variants
+│   ├── Model-D/                  # Bayesian-ensemble results and figures
+│   └── ML/                       # gradient-boosting results and figures
 └── latex/
     ├── main.tex           # main document
     ├── nitu_spin.tex      # spin-posterior section

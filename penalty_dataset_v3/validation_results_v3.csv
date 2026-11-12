@@ -1,0 +1,66 @@
+check,passed,detail
+"60,000 rows in each main file",True,
+all v2 columns present in simple file,True,missing: []
+same latent shots in simple and realistic files,True,
+split ~70/15/15,True,"{'train': 0.699, 'test': 0.151, 'val': 0.15}"
+no duplicate rows,True,
+no missing values in parameter/label columns,True,
+simple: outcome and bounce count reproduced by independent event-based solver,True,0/500 mismatches (163 bounced shots in sample) []
+simple: goal-plane point reproduced (max error < 2 mm),True,"max |dy|=0.037 mm, max |dz|=0.017 mm, 99th pct=0.016 mm"
+simple: first-bounce time reproduced (max error < 0.5 ms),True,max 0.0127 ms over 163 bounced shots
+simple: true observation positions reproduced (max error < 1 mm),True,max 0.1585 mm over 2000 points
+realistic: outcome and bounce count reproduced by independent event-based solver,True,0/500 mismatches (165 bounced shots in sample) []
+realistic: goal-plane point reproduced (max error < 2 mm),True,"max |dy|=0.019 mm, max |dz|=0.019 mm, 99th pct=0.016 mm"
+realistic: first-bounce time reproduced (max error < 0.5 ms),True,max 0.0090 ms over 165 bounced shots
+realistic: true observation positions reproduced (max error < 1 mm),True,max 0.0815 mm over 2000 points
+simple: outcome and bounce count reproduced by independent event-based solver,True,0/200 mismatches (200 bounced shots in sample) []
+simple: goal-plane point reproduced (max error < 2 mm),True,"max |dy|=0.014 mm, max |dz|=0.003 mm, 99th pct=0.014 mm"
+simple: first-bounce time reproduced (max error < 0.5 ms),True,max 0.0014 ms over 200 bounced shots
+simple: true observation positions reproduced (max error < 1 mm),True,max 0.0331 mm over 800 points
+simple: no true ball-centre height below 0.11 m,True,min = 0.11000
+simple: goal-plane crossing never below 0.11 m,True,min = 0.11000
+simple: centre-based outcome matches y_goal/z_goal,True,
+simple: frame-aware outcome matches y_goal/z_goal,True,
+simple: every frame-aware 'goal' is also centre 'on_target',True,
+simple: observations present only while the ball is in play,True,0 violations
+simple: bounce bookkeeping consistent,True,
+simple: rolling balls cross the goal at z = 0.11 m,True,
+realistic: no true ball-centre height below 0.11 m,True,min = 0.11000
+realistic: goal-plane crossing never below 0.11 m,True,min = 0.11000
+realistic: centre-based outcome matches y_goal/z_goal,True,
+realistic: frame-aware outcome matches y_goal/z_goal,True,
+realistic: every frame-aware 'goal' is also centre 'on_target',True,
+realistic: observations present only while the ball is in play,True,0 violations
+realistic: bounce bookkeeping consistent,True,
+realistic: rolling balls cross the goal at z = 0.11 m,True,
+spin axis is a unit vector,True,
+k = beta*C_D and s = beta*C_L*v0,True,
+spin labels: backspin shots end higher than topspin shots,True,"{'back': 1.481, 'top': 1.042}"
+"spin labels: 'left' sidespin curves toward +y, 'right' toward -y",True,"{'left': 0.344, 'right': -0.363}"
+"simple: obs - true SD ~5.77 mm, mean ~0",True,"mean=-0.005 mm, SD=5.773 mm"
+"realistic: obs - true SD ~5.77 mm, mean ~0",True,"mean=-0.014 mm, SD=5.776 mm"
+noise iid sigma=2 mm,True,SD=2.00 mm
+noise iid sigma=5 mm,True,SD=4.99 mm
+noise iid sigma=10 mm,True,SD=9.98 mm
+noise iid sigma=20 mm,True,SD=20.00 mm
+"noise aniso_x3: x SD ~15 mm, y/z ~5 mm",True,"x=15.12, y=4.99, z=4.99 mm"
+"noise jitter_1ms: x SD ~ sqrt(5^2 + (v*1ms)^2) mm (~28 mm), y/z smaller",True,"x=26.4, y=7.7, z=6.1 mm"
+noise outlier_5pct: ~5 % of points have large errors,True,|err_x| > 25 mm in 3.08 %
+noise file uses only test-split shots,True,
+"speed mean 26-32 m/s, range 18-40",True,"mean=28.58, SD=4.76"
+"spin: instep ~3.25 rps, curve ~7.35 rps, max <= 10",True,"{'curve': 7.33, 'instep': 3.25}"
+C_D within 0.15-0.50 (Carre 2002: up to 0.5 with spin),True,"[0.160, 0.383]"
+C_L at launch within 0-0.35,True,"[0.014, 0.334]"
+COR within 0.56-0.76 (Thomas 2024),True,
+"wind 0-5 m/s, rho 1.14-1.29 kg/m3 (realistic)",True,
+all launches supercritical (Re > 2.2e5),True,min Re = 2.57e+05
+w_kick5050 gives 50/50 kick mix,True,
+w_back70 gives 70 % backspin,True,
+w_place_lower707 gives 70.7 % of on-target shots in lower half,True,
+w_place_lower707 defined only for on-target shots,True,
+"benchmark brazuca: time and speed within 1 %, height within 2 cm",True,"ours t=0.749, z=0.951, v=24.35 | paper t=0.751, z=0.938, v=24.21"
+"benchmark jabulani: time and speed within 1 %, height within 2 cm",True,"ours t=0.739, z=0.999, v=24.97 | paper t=0.737, z=1.006, v=25.09"
+realistic vs simple differ by a few cm (median 1-30 cm),True,
+stronger wind gives larger simple-vs-realistic difference,True,
+given scenario inside dataset coverage (>= 20 shots within 10 cm),True,
+"goal-zone coverage: every 3x3 cell has >= 2,000 on-target shots",True,"min cell 2799, max/min ratio 3.22"

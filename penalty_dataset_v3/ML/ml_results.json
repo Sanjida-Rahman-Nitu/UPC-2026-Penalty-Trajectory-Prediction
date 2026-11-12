@@ -1,0 +1,222 @@
+{
+  "best_model": "HGB",
+  "val": [
+    {
+      "model": "HGB",
+      "val_median_cm": 25.2,
+      "val_p90_cm": 58.47,
+      "seconds": 3.2
+    },
+    {
+      "model": "MLP",
+      "val_median_cm": 25.4,
+      "val_p90_cm": 59.58,
+      "seconds": 17.4
+    },
+    {
+      "model": "Ridge",
+      "val_median_cm": 29.73,
+      "val_p90_cm": 57.81,
+      "seconds": 0.1
+    }
+  ],
+  "test_simple_all": {
+    "n": 4921,
+    "median_cm": 25.03,
+    "p90_cm": 58.35,
+    "cov68_y": 0.644,
+    "cov68_z": 0.65,
+    "cov95_y": 0.896,
+    "cov95_z": 0.911,
+    "cov68_box": 0.428,
+    "cov95_box": 0.815
+  },
+  "test_realistic_all": {
+    "n": 4894,
+    "median_cm": 24.37,
+    "p90_cm": 56.23,
+    "cov68_y": 0.651,
+    "cov68_z": 0.657,
+    "cov95_y": 0.906,
+    "cov95_z": 0.907,
+    "cov68_box": 0.432,
+    "cov95_box": 0.82
+  },
+  "extrapolation": {
+    "n_fast_test": 851,
+    "n_slow_train": 19563,
+    "median_cm_trained_on_all": 16.1,
+    "median_cm_trained_on_slow_only": 20.3
+  },
+  "given_scenario": {
+    "model": "HGB",
+    "y": 2.743,
+    "z": 2.04,
+    "y_68": [
+      2.53,
+      2.863
+    ],
+    "z_68": [
+      1.669,
+      2.254
+    ],
+    "y_95": [
+      2.526,
+      3.261
+    ],
+    "z_95": [
+      1.522,
+      2.34
+    ],
+    "P_outcome_frame": {
+      "frame": 0.035,
+      "goal": 0.962,
+      "miss": 0.003
+    }
+  },
+  "same_shots_vs_D": [
+    {
+      "test": "simple",
+      "method": "A line",
+      "n": 300,
+      "median_cm": 64.0,
+      "p90_cm": 119.0
+    },
+    {
+      "test": "simple",
+      "method": "B vacuum",
+      "n": 300,
+      "median_cm": 48.3,
+      "p90_cm": 72.3
+    },
+    {
+      "test": "simple",
+      "method": "C drag",
+      "n": 300,
+      "median_cm": 48.8,
+      "p90_cm": 70.7
+    },
+    {
+      "test": "simple",
+      "method": "D physics",
+      "n": 300,
+      "median_cm": 26.5,
+      "p90_cm": 61.7
+    },
+    {
+      "test": "simple",
+      "method": "ML HGB",
+      "n": 300,
+      "median_cm": 25.2,
+      "p90_cm": 59.1
+    },
+    {
+      "test": "realistic",
+      "method": "A line",
+      "n": 300,
+      "median_cm": 63.6,
+      "p90_cm": 117.7
+    },
+    {
+      "test": "realistic",
+      "method": "B vacuum",
+      "n": 300,
+      "median_cm": 44.8,
+      "p90_cm": 70.2
+    },
+    {
+      "test": "realistic",
+      "method": "C drag",
+      "n": 300,
+      "median_cm": 45.5,
+      "p90_cm": 72.0
+    },
+    {
+      "test": "realistic",
+      "method": "D physics",
+      "n": 300,
+      "median_cm": 25.4,
+      "p90_cm": 58.8
+    },
+    {
+      "test": "realistic",
+      "method": "ML HGB",
+      "n": 300,
+      "median_cm": 25.2,
+      "p90_cm": 55.5
+    }
+  ],
+  "accuracy_vs_time": [
+    {
+      "t_last_s": 0.1,
+      "ML_median_cm": 24.85,
+      "ML_p90_cm": 58.46
+    },
+    {
+      "t_last_s": 0.15,
+      "ML_median_cm": 11.08,
+      "ML_p90_cm": 25.55
+    },
+    {
+      "t_last_s": 0.2,
+      "ML_median_cm": 6.29,
+      "ML_p90_cm": 13.82
+    }
+  ],
+  "noise_sensitivity": [
+    {
+      "noise": "iid",
+      "sigma_mm": 2.0,
+      "ML_median_cm": 19.008,
+      "ML_cov68_y": 0.732,
+      "ML_cov68_z": 0.764
+    },
+    {
+      "noise": "iid",
+      "sigma_mm": 5.0,
+      "ML_median_cm": 23.714,
+      "ML_cov68_y": 0.639,
+      "ML_cov68_z": 0.65
+    },
+    {
+      "noise": "iid",
+      "sigma_mm": 10.0,
+      "ML_median_cm": 34.429,
+      "ML_cov68_y": 0.489,
+      "ML_cov68_z": 0.494
+    },
+    {
+      "noise": "iid",
+      "sigma_mm": 20.0,
+      "ML_median_cm": 54.792,
+      "ML_cov68_y": 0.302,
+      "ML_cov68_z": 0.331
+    },
+    {
+      "noise": "aniso_x3",
+      "sigma_mm": 5.0,
+      "ML_median_cm": 24.464,
+      "ML_cov68_y": 0.632,
+      "ML_cov68_z": 0.647
+    },
+    {
+      "noise": "jitter_1ms",
+      "sigma_mm": 5.0,
+      "ML_median_cm": 25.794,
+      "ML_cov68_y": 0.613,
+      "ML_cov68_z": 0.598
+    },
+    {
+      "noise": "outlier_5pct",
+      "sigma_mm": 5.0,
+      "ML_median_cm": 25.077,
+      "ML_cov68_y": 0.615,
+      "ML_cov68_z": 0.623
+    }
+  ],
+  "bounced_shots": {
+    "n": 1697,
+    "ML_median_cm": 26.44,
+    "ML_p90_cm": 64.7
+  }
+}

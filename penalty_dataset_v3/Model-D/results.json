@@ -1,0 +1,302 @@
+{
+  "settings": {
+    "SEED": 7,
+    "N_DRAWS": 2000,
+    "N_DRAWS_T": 600,
+    "N_TEST": 300,
+    "SIGMA_m": 0.0058,
+    "DT_s": 0.001
+  },
+  "given_scenario": {
+    "A_straight_line": [
+      3.118,
+      2.392
+    ],
+    "B_vacuum": [
+      3.217,
+      1.957
+    ],
+    "C_drag_only": [
+      3.217,
+      1.918
+    ],
+    "D_most_likely_yz_m": [
+      2.651,
+      1.949
+    ],
+    "D_sigma_yz_m": [
+      0.215,
+      0.234
+    ],
+    "D_corr_yz": 0.287,
+    "P_inside_goal_rectangle": 0.994,
+    "P_whole_ball_clears_frame": 0.95,
+    "P_ground_before_goal": 0.0,
+    "P_curve_kick": 0.832,
+    "ESS": 392.9
+  },
+  "test_simple": {
+    "A": {
+      "median_cm": 63.99,
+      "p90_cm": 119.04,
+      "mean_cm": 65.84
+    },
+    "B": {
+      "median_cm": 48.27,
+      "p90_cm": 72.35,
+      "mean_cm": 49.04
+    },
+    "C": {
+      "median_cm": 48.76,
+      "p90_cm": 70.65,
+      "mean_cm": 49.49
+    },
+    "D": {
+      "median_cm": 26.45,
+      "p90_cm": 61.73,
+      "mean_cm": 31.12
+    },
+    "D_coverage68": 0.69,
+    "D_coverage95": 0.92,
+    "D_median_sigma_cm": 33.88
+  },
+  "test_realistic": {
+    "A": {
+      "median_cm": 63.6,
+      "p90_cm": 117.66,
+      "mean_cm": 66.15
+    },
+    "B": {
+      "median_cm": 44.79,
+      "p90_cm": 70.22,
+      "mean_cm": 47.99
+    },
+    "C": {
+      "median_cm": 45.46,
+      "p90_cm": 71.96,
+      "mean_cm": 48.41
+    },
+    "D": {
+      "median_cm": 25.41,
+      "p90_cm": 58.78,
+      "mean_cm": 30.91
+    },
+    "D_coverage68": 0.703,
+    "D_coverage95": 0.93,
+    "D_median_sigma_cm": 34.12
+  },
+  "extra": {
+    "accuracy_vs_time": [
+      {
+        "t_last_s": 0.1,
+        "C_median_cm": 48.019,
+        "D_median_cm": 26.035,
+        "D_p90_cm": 59.382,
+        "D_sigma_cm": 34.892,
+        "D_cov68": 0.753,
+        "D_cov95": 0.933
+      },
+      {
+        "t_last_s": 0.15,
+        "C_median_cm": 43.14,
+        "D_median_cm": 11.179,
+        "D_p90_cm": 22.723,
+        "D_sigma_cm": 11.845,
+        "D_cov68": 0.56,
+        "D_cov95": 0.953
+      },
+      {
+        "t_last_s": 0.2,
+        "C_median_cm": 37.396,
+        "D_median_cm": 5.086,
+        "D_p90_cm": 12.051,
+        "D_sigma_cm": 6.363,
+        "D_cov68": 0.6,
+        "D_cov95": 0.867
+      }
+    ],
+    "noise_sensitivity": [
+      {
+        "noise": "iid",
+        "sigma_mm": 2.0,
+        "method_sigma_mm": 2.0,
+        "C_median_cm": 49.57,
+        "D_median_cm": 10.98,
+        "D_p90_cm": 24.601,
+        "D_cov68": 0.62,
+        "D_cov95": 0.91
+      },
+      {
+        "noise": "iid",
+        "sigma_mm": 5.0,
+        "method_sigma_mm": 5.0,
+        "C_median_cm": 49.048,
+        "D_median_cm": 21.736,
+        "D_p90_cm": 53.815,
+        "D_cov68": 0.69,
+        "D_cov95": 0.93
+      },
+      {
+        "noise": "iid",
+        "sigma_mm": 10.0,
+        "method_sigma_mm": 10.0,
+        "C_median_cm": 49.66,
+        "D_median_cm": 35.938,
+        "D_p90_cm": 66.928,
+        "D_cov68": 0.75,
+        "D_cov95": 0.95
+      },
+      {
+        "noise": "iid",
+        "sigma_mm": 20.0,
+        "method_sigma_mm": 20.0,
+        "C_median_cm": 49.647,
+        "D_median_cm": 48.368,
+        "D_p90_cm": 77.793,
+        "D_cov68": 0.63,
+        "D_cov95": 0.99
+      },
+      {
+        "noise": "aniso_x3",
+        "sigma_mm": 5.0,
+        "method_sigma_mm": 5.8,
+        "C_median_cm": 49.425,
+        "D_median_cm": 29.62,
+        "D_p90_cm": 64.52,
+        "D_cov68": 0.66,
+        "D_cov95": 0.94
+      },
+      {
+        "noise": "jitter_1ms",
+        "sigma_mm": 5.0,
+        "method_sigma_mm": 5.8,
+        "C_median_cm": 49.321,
+        "D_median_cm": 30.361,
+        "D_p90_cm": 63.004,
+        "D_cov68": 0.7,
+        "D_cov95": 0.84
+      },
+      {
+        "noise": "outlier_5pct",
+        "sigma_mm": 5.0,
+        "method_sigma_mm": 5.8,
+        "C_median_cm": 50.01,
+        "D_median_cm": 26.881,
+        "D_p90_cm": 59.757,
+        "D_cov68": 0.74,
+        "D_cov95": 0.9
+      }
+    ],
+    "error_by_zone_cm": {
+      "low|right (-y)": 22.69,
+      "low|centre": 25.24,
+      "low|left (+y)": 32.46,
+      "middle|right (-y)": 22.49,
+      "middle|centre": 24.79,
+      "middle|left (+y)": 27.65,
+      "high|right (-y)": 34.93,
+      "high|centre": 19.74,
+      "high|left (+y)": 21.35
+    },
+    "bounced_shots": {
+      "C": {
+        "median_cm": 47.71,
+        "p90_cm": 100.67,
+        "mean_cm": 54.32
+      },
+      "D": {
+        "median_cm": 50.3,
+        "p90_cm": 104.89,
+        "mean_cm": 56.12
+      },
+      "D_coverage68": 0.327,
+      "D_coverage95": 0.547,
+      "D_median_sigma_cm": 36.12
+    },
+    "given_prior_sensitivity": [
+      {
+        "p_curve_prior": 0.1,
+        "y": 2.8,
+        "z": 2.007,
+        "sy": 0.282,
+        "sz": 0.282,
+        "P_curve_posterior": 0.55,
+        "ESS": 251.992
+      },
+      {
+        "p_curve_prior": 0.3,
+        "y": 2.665,
+        "z": 1.964,
+        "sy": 0.227,
+        "sz": 0.234,
+        "P_curve_posterior": 0.807,
+        "ESS": 346.471
+      },
+      {
+        "p_curve_prior": 0.5,
+        "y": 2.61,
+        "z": 1.944,
+        "sy": 0.173,
+        "sz": 0.208,
+        "P_curve_posterior": 0.912,
+        "ESS": 489.603
+      },
+      {
+        "p_curve_prior": 0.7,
+        "y": 2.587,
+        "z": 1.926,
+        "sy": 0.134,
+        "sz": 0.192,
+        "P_curve_posterior": 0.96,
+        "ESS": 645.018
+      }
+    ],
+    "given_sigma_sensitivity": [
+      {
+        "sigma_mm": 3.0,
+        "y": 2.553,
+        "z": 1.971,
+        "sy": 0.074,
+        "sz": 0.124,
+        "P_curve_posterior": 0.999,
+        "ESS": 97.085
+      },
+      {
+        "sigma_mm": 5.8,
+        "y": 2.665,
+        "z": 1.964,
+        "sy": 0.227,
+        "sz": 0.234,
+        "P_curve_posterior": 0.807,
+        "ESS": 346.471
+      },
+      {
+        "sigma_mm": 10.0,
+        "y": 2.966,
+        "z": 1.957,
+        "sy": 0.342,
+        "sz": 0.337,
+        "P_curve_posterior": 0.398,
+        "ESS": 1223.697
+      }
+    ],
+    "given_ensemble_groups": [
+      {
+        "group": "curve draws",
+        "total_weight": 0.832,
+        "y": 2.565,
+        "z": 1.919
+      },
+      {
+        "group": "instep draws",
+        "total_weight": 0.168,
+        "y": 3.079,
+        "z": 2.1
+      }
+    ],
+    "given_weighted_mode_yz_m": [
+      2.55,
+      1.95
+    ]
+  }
+}
