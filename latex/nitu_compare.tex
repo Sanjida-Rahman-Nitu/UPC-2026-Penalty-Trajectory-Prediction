@@ -1,0 +1,44 @@
+% nitu_compare.tex -- insert with \input{nitu_compare} after the Machine-Learning Results section (just before \section{Goalkeeper Reach Analysis}).
+\section{Further Comparison of Method D and Machine Learning}
+\subsection{Observation time}
+\begin{table}[H]
+\centering
+\caption{Median (90th percentile) goal-plane error versus the time of the last observation (cm). Method D: 150 test shots; ML retrained for each window, full clean test set.}
+\label{tab:time}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Last observation & C: gravity + drag & D: Bayesian ensemble & ML: gradient boosting\\
+\midrule
+0.10 s & 48.0 & 26.0 (59.4) & 24.9 (58.5)\\
+0.15 s & 43.1 & 11.2 (22.7) & 11.1 (25.6)\\
+0.20 s & 37.4 & \phantom{0}5.1 (12.1) & \phantom{0}6.3 (13.8)\\
+\bottomrule
+\end{tabular}
+\end{table}
+One extra observation at 0.15 s more than halves the error of both D and ML, while the drag-only fit improves only slightly: its error is dominated by the missing spin. For a goalkeeper this means that each additional 0.05 s of watching the ball is very valuable.
+
+\subsection{Robustness to measurement noise}
+\begin{table}[H]
+\centering
+\caption{Median goal-plane error (cm) and 68\,\% coverage for different measurement noise. D assumes the true $\sigma$ for i.i.d.\ noise and $\sigma=5.8$ mm otherwise; ML was trained once at 5 mm noise. D: 100 shots per row; ML: full clean test subset.}
+\label{tab:noise}
+\small
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+Noise & D median & D 68\,\% cov. & ML median & ML 68\,\% cov.\ ($y$, $z$)\\
+\midrule
+i.i.d.\ 2 mm & 11.0 & 0.62 & 19.0 & 0.73, 0.76\\
+i.i.d.\ 5 mm & 21.7 & 0.69 & 23.7 & 0.64, 0.65\\
+i.i.d.\ 10 mm & 35.9 & 0.75 & 34.4 & 0.49, 0.49\\
+i.i.d.\ 20 mm & 48.4 & 0.63 & 54.8 & 0.30, 0.33\\
+$x$ noise $\times3$ & 29.6 & 0.66 & 24.5 & 0.63, 0.65\\
+1 ms timing jitter & 30.4 & 0.70 & 25.8 & 0.61, 0.60\\
+5\,\% outliers & 26.9 & 0.74 & 25.1 & 0.62, 0.62\\
+\bottomrule
+\end{tabular}
+\end{table}
+When the noise level is known, Method D adapts: it is clearly more accurate than ML for precise measurements (11 vs 19 cm at 2 mm) and its coverage stays between 0.62 and 0.75, whereas the ML intervals, learned at one noise level, cover only about 30\,\% of the cases at 20 mm. When the noise has a different structure than assumed (anisotropic, timing jitter, outliers), ML is slightly more accurate, but Method D keeps a reasonable coverage.
+
+\subsection{Where in the goal is prediction hardest?}
+Across the $3\times3$ goal zones the median error of Method D ranges from 20 cm (high centre) to 35 cm (high, kicker's right) and 32 cm (low, kicker's left), with about 30 test shots per zone; ML shows the same range (18--33 cm). No zone is predicted dramatically worse than the others.

@@ -1,0 +1,181 @@
+% appendix_code.tex -- essential code (from UPC_B_Nitu.ipynb and UPC_B_ML.ipynb). Insert with \input{appendix_code} inside \section{Code}.
+The complete analysis was run in Python (NumPy, pandas, scikit-learn). Below is the essential code of the physics engine, the prior, Method D and the machine-learning features; plotting and bookkeeping code is omitted.
+
+
+\subsection*{Physics engine (vectorised RK4)}
+\begin{lstlisting}[style=mypython,basicstyle=\ttfamily\scriptsize]
+def accel(v, k, s, w):
+    sp = np.linalg.norm(v, axis=1, keepdims=True)
+    a = -k[:, None]*sp*v + s[:, None]*np.cross(w, v)
+    a[:, 2] -= G
+    return a
+
+def rk4_step(p, v, k, s, w, h):
+    a1 = accel(v, k, s, w);              v1 = v
+    a2 = accel(v + 0.5*h*a1, k, s, w);   v2 = v + 0.5*h*a1
+    a3 = accel(v + 0.5*h*a2, k, s, w);   v3 = v + 0.5*h*a2
+    a4 = accel(v + h*a3, k, s, w);       v4 = v + h*a3
+    return p + h/6*(v1 + 2*v2 + 2*v3 + v4), v + h/6*(a1 + 2*a2 + 2*a3 + a4)
+
+def positions_at(v0, k, s, w, times):
+    # positions at the given times (all times multiples of DT), shape (n, len(times), 3)
+    n = len(v0); p = np.tile(P0, (n, 1)); v = v0.copy()
+    out = np.zeros((n, len(times), 3)); steps = np.round(np.asarray(times)/DT).astype(int)
+    for i in range(1, steps.max() + 1):
+        p, v = rk4_step(p, v, k, s, w, DT)
+        for j in np.where(steps == i)[0]:
+            out[:, j] = p
+    return out
+
+def to_goal(v0, k, s, w, t_max=1.5):
+    # crossing of x = 11 (ground ignored); returns y, z, t, and min height before the goal
+    n = len(v0); p = np.tile(P0, (n, 1)); v = v0.copy()
+    y = np.full(n, np.nan); z = np.full(n, np.nan); tg = np.full(n, np.nan)
+    zmin = np.full(n, P0[2]); act = np.ones(n, bool)
+    for i in range(int(t_max/DT)):
+        idx = np.where(act)[0]
+        if len(idx) == 0: break
+        p1, v1 = rk4_step(p[idx], v[idx], k[idx], s[idx], w[idx], DT)
+        cross = p1[:, 0] >= X_GOAL
+        if cross.any():
+            f = (X_GOAL - p[idx][cross, 0])/(p1[cross, 0] - p[idx][cross, 0])
+            pe = p[idx][cross] + f[:, None]*(p1[cross] - p[idx][cross])
+            j = idx[cross]; y[j], z[j] = pe[:, 1], pe[:, 2]; tg[j] = (i + f)*DT; act[j] = False
+        p[idx], v[idx] = p1, v1
+        zmin[idx] = np.minimum(zmin[idx], p1[:, 2])
+    return y, z, tg, zmin
+\end{lstlisting}
+\subsection*{Literature-based prior}
+\begin{lstlisting}[style=mypython,basicstyle=\ttfamily\scriptsize]
+def unit(a): return a/np.linalg.norm(a, axis=-1, keepdims=True)
+
+def draw_prior(n, v_guess, rng, p_curve=0.30):
+    # Sample (k, s, w_hat) given a rough launch velocity guess (for speed, Sp and the spin-axis frame)
+    curve = rng.random(n) < p_curve
+    rps = np.where(curve, rng.normal(7.35, 1.0, n), rng.normal(3.25, 0.8, n)).clip(0.0, 10.0)
+    mass = rng.uniform(0.410, 0.450, n); cd0 = rng.uniform(0.15, 0.20, n); clmax = rng.uniform(0.25, 0.35, n)
+    speed = np.linalg.norm(v_guess); az = np.arctan2(v_guess[1], v_guess[0])
+    e_s = np.array([np.cos(az), np.sin(az), 0.0]); e_z = np.array([0.0, 0.0, 1.0]); e_h = np.cross(e_z, e_s)
+    side = np.where(rng.random(n) < 0.5, 1.0, -1.0); tb = np.where(rng.random(n) < 0.5, 1.0, -1.0)
+    elev = np.where(curve, np.radians(np.clip(rng.normal(62.6, 10, n), 30, 89)), np.abs(np.radians(rng.normal(0, 20, n))))
+    screw = np.where(curve, rng.normal(0.38, 0.05, n), rng.normal(0.0, 0.10, n))
+    horiz = np.cos(elev); screw = np.clip(screw, -0.95*horiz, 0.95*horiz)
+    hc = tb*np.sqrt(np.maximum(horiz**2 - screw**2, 0))
+    w = unit(hc[:, None]*e_h + screw[:, None]*e_s + (side*np.sin(elev))[:, None]*e_z)
+    sp0 = R_BALL*2*np.pi*rps/speed
+    beta = RHO*AREA/(2*mass)
+    k = beta*(cd0 + 0.55*sp0)
+    s = beta*clmax*(1 - np.exp(-sp0/0.10))*speed
+    return dict(k=k, s=s, w=w, curve=curve, rps=rps)
+\end{lstlisting}
+\subsection*{Gauss--Newton fit and Method D}
+\begin{lstlisting}[style=mypython,basicstyle=\ttfamily\scriptsize]
+def fit_v0(obs, times, k, s, w, v_init, iters=6):
+    # Gauss-Newton fit of v0 for many (k, s, w) at once. obs: (m, 3) at times (m,)
+    n = len(k); v0 = np.tile(v_init, (n, 1)); eps = 1e-3
+    for _ in range(iters):
+        base = positions_at(v0, k, s, w, times)                       # (n, m, 3)
+        r = (obs[None] - base).reshape(n, -1)                          # residuals (n, 3m)
+        J = np.zeros((n, r.shape[1], 3))
+        for c in range(3):
+            dv = v0.copy(); dv[:, c] += eps
+            J[:, :, c] = ((positions_at(dv, k, s, w, times) - base)/eps).reshape(n, -1)
+        JT = np.transpose(J, (0, 2, 1))
+        step = np.linalg.solve(JT @ J, (JT @ r[..., None]))[..., 0]
+        v0 = v0 + step
+        if np.abs(step).max() < 1e-6: break
+    base = positions_at(v0, k, s, w, times)
+    chi2 = (((obs[None] - base)/SIGMA)**2).reshape(n, -1).sum(1)
+    return v0, chi2
+
+def v_guess_from(obs, times):
+    return (obs[0] - P0)/times[0]
+
+def method_A(obs, times):
+    d = (obs[-1] - obs[-2])/(times[-1] - times[-2])
+    tt = (X_GOAL - obs[-1, 0])/d[0]
+    return obs[-1, 1] + d[1]*tt, obs[-1, 2] + d[2]*tt
+
+def method_fixed(obs, times, k_val, s_val=0.0):
+    w = np.array([[0.0, 0.0, 1.0]]); k = np.array([k_val]); s = np.array([s_val])
+    v0, _ = fit_v0(obs, times, k, s, w, v_guess_from(obs, times))
+    y, z, _, _ = to_goal(v0, k, s, w)
+    return y[0], z[0]
+
+def method_B(obs, times): return method_fixed(obs, times, 0.0)
+K_C = RHO*AREA/(2*0.43)*0.20
+def method_C(obs, times): return method_fixed(obs, times, K_C)
+
+def method_D(obs, times, n_draws, rng, return_all=False, p_curve=0.30):
+    pr = draw_prior(n_draws, v_guess_from(obs, times), rng, p_curve)
+    v0, chi2 = fit_v0(obs, times, pr["k"], pr["s"], pr["w"], v_guess_from(obs, times))
+    y, z, tg, zmin = to_goal(v0, pr["k"], pr["s"], pr["w"])
+    ok = np.isfinite(y)
+    logw = -0.5*(chi2 - chi2[ok].min()); wgt = np.where(ok, np.exp(logw), 0.0); wgt /= wgt.sum()
+    mu = np.array([np.sum(wgt*np.nan_to_num(y)), np.sum(wgt*np.nan_to_num(z))])
+    d = np.stack([np.nan_to_num(y) - mu[0], np.nan_to_num(z) - mu[1]], 1)
+    cov = (wgt[:, None, None]*(d[:, :, None]*d[:, None, :])).sum(0)
+    ess = 1.0/np.sum(wgt**2)
+    out = dict(mu=mu, cov=cov, ess=ess)
+    if return_all:
+        out.update(y=y, z=z, w=wgt, tg=tg, zmin=zmin, chi2=chi2, prior=pr, v0=v0)
+    return out
+\end{lstlisting}
+\subsection*{Machine-learning features}
+\begin{lstlisting}[style=mypython,basicstyle=\ttfamily\scriptsize]
+def make_features(d):
+    p1 = d[["x_t005_obs", "y_t005_obs", "z_t005_obs"]].values
+    p2 = d[["x_t010_obs", "y_t010_obs", "z_t010_obs"]].values
+    v1 = (p1 - P0)/0.05; v2 = (p2 - p1)/0.05; a = (v2 - v1)/0.05
+    F = pd.DataFrame(np.hstack([p1, p2, v1, v2, a]),
+                     columns=[f"{n}_{c}" for n in ("p1", "p2", "v1", "v2", "acc") for c in "xyz"], index=d.index)
+    for k, v in (("1", v1), ("2", v2)):
+        F[f"speed{k}"] = np.linalg.norm(v, axis=1)
+        F[f"azim{k}"] = np.degrees(np.arctan2(v[:, 1], v[:, 0]))
+        F[f"elev{k}"] = np.degrees(np.arctan2(v[:, 2], np.hypot(v[:, 0], v[:, 1])))
+    tt = (11.0 - p2[:, 0])/v2[:, 0]
+    F["lin_y"] = p2[:, 1] + v2[:, 1]*tt; F["lin_z"] = p2[:, 2] + v2[:, 2]*tt
+    return F
+\end{lstlisting}
+
+\subsection*{Heat Map Generating}
+\begin{lstlisting}[style=mypython,basicstyle=\ttfamily\scriptsize]
+# H1: Polar chi-square heatmap
+fig, ax = plt.subplots(figsize=(6,6), subplot_kw={"projection":"polar"})
+im = ax.pcolormesh(np.radians(ALPHA), CLS, np.clip(CHI,0,40),
+                   cmap="viridis_r", shading="auto", vmin=0, vmax=40)
+ax.contour(np.radians(ALPHA), CLS, CHI, [5,10],
+           colors="white", linewidths=1.2)
+ax.set_theta_zero_location("N")
+ax.set_theta_direction(-1)
+ax.set_thetagrids([0,90,180,270],
+    ["Inward sidespin (0°)","Topspin (90°)",
+     "Outward sidespin (180°)","Backspin (-90°)"])
+ax.set_ylim(.05,.30)
+ax.set_yticks([.1,.2,.3])
+ax.plot(np.radians(ALPHA[j]),CLS[i],"w*",ms=14,mec="k")
+ax.set_title(r"Spin Configuration Fit ($\chi^2$)",pad=20)
+fig.colorbar(im,ax=ax,shrink=.75,label=r"$\chi^2$")
+fig.savefig("Figure/Heat_chi2_polar.png",dpi=300,bbox_inches="tight")
+plt.close()
+# H2: Goal-plane coordinate heatmaps
+fig, axs = plt.subplots(1,2,figsize=(12,4.4),sharey=True)
+
+for ax,F,title,cmap,vmin,vmax in zip(
+    axs,[Y,Z],["Lateral position $y_{goal}$ (m)",
+               "Vertical position $z_{goal}$ (m)"],
+    ["RdBu_r","YlGnBu_r"],[2.0,1.0],[4.2,2.6]):
+    im = ax.pcolormesh(ALPHA,CLS,F,cmap=cmap,
+                       shading="nearest",vmin=vmin,vmax=vmax)
+    cs = ax.contour(ALPHA,CLS,CHI,[5,10,20],
+                    colors="black",linewidths=1)
+    ax.clabel(cs,fmt=r"$\chi^2$=%d",fontsize=8)
+    ax.axhspan(.10,.25,fc="none",ec="white",ls="--")
+    ax.set_xlabel(r"Spin-axis angle $\alpha$ (deg)")
+    ax.set_xticks([-180,-90,0,90,180])
+    ax.set_title(title)
+    fig.colorbar(im,ax=ax)
+axs[0].set_ylabel(r"Lift coefficient $C_L$")
+fig.savefig("Figure/Heat_yz_maps.png",dpi=300,bbox_inches="tight")
+plt.close()
+\end{lstlisting}

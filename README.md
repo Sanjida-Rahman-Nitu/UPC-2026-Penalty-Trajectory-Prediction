@@ -4,7 +4,7 @@ Solution paper for **Problem B: Predicting FIFA Penalty Trajectories** of the
 **University Physics Competition (UPC) 2026**, submitted as Team 1194.
 
 📄 **Paper:** [`1194B.pdf`](1194B.pdf) (34 pages)
-📦 **LaTeX source:** [`1194B_latex_source.zip`](1194B_latex_source.zip) (compiles with `pdflatex` → `bibtex` → `pdflatex` ×2)
+📝 **LaTeX source:** [`latex/`](latex/) (compile `main.tex` with `pdflatex` → `bibtex` → `pdflatex` ×2)
 
 ## The problem
 
@@ -43,3 +43,18 @@ Apply it to the shot observed at (1.50, 0.45, 0.44) m and (2.96, 0.86, 0.74) m.
 The height of the entry point is robust, while the lateral coordinate depends on the
 unobserved sidespin; the remaining error of about 25 cm is set by the information in two
 early observations rather than by the choice of method.
+
+## Repository structure
+
+```
+├── 1194B.pdf              # submitted paper
+└── latex/
+    ├── main.tex           # main document
+    ├── nitu_spin.tex      # spin-posterior section
+    ├── nitu_compare.tex   # method comparison and noise tests
+    ├── appendix_code.tex  # code appendix
+    ├── ai_report.tex      # AI-use statement
+    ├── references.bib     # bibliography
+    ├── hellofig.png       # model-hierarchy figure
+    └── Figure/            # all other figures
+```
