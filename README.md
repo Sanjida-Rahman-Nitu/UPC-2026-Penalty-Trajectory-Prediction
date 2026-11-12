@@ -4,6 +4,7 @@ Solution paper for **Problem B: Predicting FIFA Penalty Trajectories** of the
 **University Physics Competition (UPC) 2026**, submitted as Team 1194.
 
 📄 **Paper:** [`1194B.pdf`](1194B.pdf) (34 pages)
+📦 **LaTeX source:** [`1194B_latex_source.zip`](1194B_latex_source.zip) (compiles with `pdflatex` → `bibtex` → `pdflatex` ×2)
 
 ## The problem
 
